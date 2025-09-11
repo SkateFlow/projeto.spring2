@@ -4,12 +4,17 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import itb.grupo5.skateflow.model.entity.Evento;
+import itb.grupo5.skateflow.model.entity.Usuario;
 import itb.grupo5.skateflow.rest.exception.ResourceNotFoundException;
 import itb.grupo5.skateflow.service.EventoService;
 
@@ -40,8 +45,8 @@ public class EventoController {
 			} else {
 				throw new ResourceNotFoundException("Evento não encontrado!");
 			}
-		}
-		
+		}		
+			
 		@GetMapping("/findAll")
 		public ResponseEntity<List<Evento>> findAll(){
 			
@@ -57,7 +62,39 @@ public class EventoController {
 		        throw new ResourceNotFoundException("Nenhum evento encontrado!");
 		    }
 		    return ResponseEntity.ok(eventos);
-		}		
+		}	
+		
+		@PostMapping("/save")
+		public ResponseEntity<?> save(@RequestBody Evento evento) {
+
+			Evento _evento = eventoService.save(evento);
+			if (_evento != null) {
+				return ResponseEntity.ok("Evento cadastrado com sucesso");
+			}
+
+			throw new ResourceNotFoundException("Evento já cadastrado");
+		}
+		
+		@PutMapping("/update/{id}")
+		public ResponseEntity<Evento> update(@PathVariable long id, @RequestBody Evento evento) {
+		    Evento eventoAtualizado = eventoService.update(id, evento);
+		    if (eventoAtualizado != null) {
+		        return ResponseEntity.ok(eventoAtualizado);
+		    } else {
+		        throw new ResourceNotFoundException("Evento não encontrado para atualização.");
+		    }
+		}
+		
+		@DeleteMapping("/delete/{id}")
+		public ResponseEntity<?> delete(@PathVariable long id) {
+		    boolean deleted = eventoService.delete(id);
+		    if (deleted) {
+		        return ResponseEntity.ok("Evento deletado com sucesso!");
+		    }
+		    throw new ResourceNotFoundException("Erro ao deletar evento!");
+		}
+		
+		
 
 	
 
