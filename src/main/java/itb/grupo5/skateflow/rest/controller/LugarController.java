@@ -33,7 +33,7 @@ public class LugarController {
         throw new ResourceNotFoundException("Erro ao cadastrar lugar");
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/listar")
     public ResponseEntity<List<Lugar>> findAll() {
         List<Lugar> lugares = lugarService.findAll();
         if (lugares.isEmpty()) {
