@@ -1,7 +1,6 @@
 package itb.grupo5.skateflow.model.entity;
 
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,22 +12,28 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "Evento")
 public class Evento {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String nome;
 	private String info;
-	private byte[] foto;		
-	private LocalDateTime dataCadastro;	
+	private byte[] foto;
+	private LocalDateTime dataCadastro;
 	private LocalDateTime dataInicio;
-	private LocalDateTime dataFim;   
-	
+	private LocalDateTime dataFim;
+
 	@ManyToOne
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario_id;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "lugar_id") // Chave estrangeira para Lugar
+	private Lugar lugar_id; // Associando o Evento ao Lugar
+
 	private String statusEvento;
+
+	// Getters e setters
 
 	public long getId() {
 		return id;
@@ -94,14 +99,19 @@ public class Evento {
 		this.usuario_id = usuario_id;
 	}
 
+	public Lugar getLugar_id() {
+		return lugar_id;
+	}
+
+	public void setLugar_id(Lugar lugar_id) {
+		this.lugar_id = lugar_id;
+	}
+
 	public String getStatusEvento() {
 		return statusEvento;
 	}
 
 	public void setStatusEvento(String statusEvento) {
 		this.statusEvento = statusEvento;
-	}	
-	
-	
-
+	}
 }
