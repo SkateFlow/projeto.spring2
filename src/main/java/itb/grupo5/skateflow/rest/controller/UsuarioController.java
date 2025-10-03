@@ -21,101 +21,112 @@ import itb.grupo5.skateflow.service.UsuarioService;
 @RequestMapping("/usuario")
 public class UsuarioController {
 
-	private UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
-	public UsuarioController(UsuarioService usuarioService) {
-		super();
-		this.usuarioService = usuarioService;
-	}
+    public UsuarioController(UsuarioService usuarioService) {
+        super();
+        this.usuarioService = usuarioService;
+    }
 
-	@GetMapping("/test")
-	public String getTest() {
-		return "Olá, Usuario!";
-	}
+    @GetMapping("/test")
+    public String getTest() {
+        return "Olá, Usuario!";
+    }
 
-	@GetMapping("/findById/{id}")
-	public ResponseEntity<Usuario> findById(@PathVariable long id) {
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Usuario> findById(@PathVariable long id) {
 
-		Usuario usuario = usuarioService.findById(id);
+        Usuario usuario = usuarioService.findById(id);
 
-		if (usuario != null) {
-			return ResponseEntity.ok(usuario);
-		} else {
-			throw new ResourceNotFoundException("Usuário não encontrado!");
-		}
-	}
+        if (usuario != null) {
+            return ResponseEntity.ok(usuario);
+        } else {
+            throw new ResourceNotFoundException("Usuário não encontrado!");
+        }
+    }
 
-	@GetMapping("/listar")
-	public ResponseEntity<List<Usuario>> listarUsuarios() {
-		List<Usuario> usuarios = usuarioService.findAll(); // método do service
-		if (usuarios.isEmpty()) {
-			throw new ResourceNotFoundException("Nenhum usuário encontrado!");
-		}
-		return ResponseEntity.ok(usuarios);
-	}
+    @GetMapping("/listar")
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        List<Usuario> usuarios = usuarioService.findAll();
+        if (usuarios.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhum usuário encontrado!");
+        }
+        return ResponseEntity.ok(usuarios);
+    }
 
-	@PostMapping("/save")
-	public ResponseEntity<?> save(@RequestBody Usuario usuario) {
+    @PostMapping("/save")
+    public ResponseEntity<?> save(@RequestBody Usuario usuario) {
 
-		Usuario _usuario = usuarioService.save(usuario);
-		if (_usuario != null) {
-			return ResponseEntity.ok("Usuário cadastrado com sucesso");
-		}
+        Usuario _usuario = usuarioService.save(usuario);
+        if (_usuario != null) {
+            return ResponseEntity.ok("Usuário cadastrado com sucesso");
+        }
 
-		throw new ResourceNotFoundException("Usuário já cadastrado");
-	}
+        throw new ResourceNotFoundException("Usuário já cadastrado");
+    }
 
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody Usuario usuario) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Usuario usuario) {
 
-		Usuario _usuario = usuarioService.login(usuario.getEmail(), usuario.getSenha());
-		if (_usuario != null) {
-			return ResponseEntity.ok(_usuario);
-		}
+        Usuario _usuario = usuarioService.login(usuario.getEmail(), usuario.getSenha());
+        if (_usuario != null) {
+            return ResponseEntity.ok(_usuario);
+        }
 
-		throw new ResourceNotFoundException("Dados Incorretos!");
-	}
+        throw new ResourceNotFoundException("Dados Incorretos!");
+    }
 
-	@PutMapping("/alterarSenha/{id}")
-	public ResponseEntity<?> alterarSenha(@PathVariable long id, @RequestBody Usuario usuario) {
+    @PutMapping("/alterarSenha/{id}")
+    public ResponseEntity<?> alterarSenha(@PathVariable long id, @RequestBody Usuario usuario) {
 
-		Usuario _usuario = usuarioService.alterarSenha(id, usuario);
-		if (_usuario != null) {
-			return ResponseEntity.ok().body("Senha alterado com sucesso!");
-		}
+        Usuario _usuario = usuarioService.alterarSenha(id, usuario);
+        if (_usuario != null) {
+            return ResponseEntity.ok().body("Senha alterado com sucesso!");
+        }
 
-		throw new ResourceNotFoundException("Erro ao alterar a senha!");
-	}
+        throw new ResourceNotFoundException("Erro ao alterar a senha!");
+    }
 
-	@PutMapping("/inativar/{id}")
-	public ResponseEntity<?> inativar(@PathVariable long id) {
+    @PutMapping("/inativar/{id}")
+    public ResponseEntity<?> inativar(@PathVariable long id) {
 
-		Usuario _usuario = usuarioService.inativar(id);
-		if (_usuario != null) {
-			return ResponseEntity.ok().body("Conta de usuário inativa com sucesso!");
-		}
+        Usuario _usuario = usuarioService.inativar(id);
+        if (_usuario != null) {
+            return ResponseEntity.ok().body("Conta de usuário inativa com sucesso!");
+        }
 
-		throw new ResourceNotFoundException("Erro ao inativar a conta de usuário!");
-	}
+        throw new ResourceNotFoundException("Erro ao inativar a conta de usuário!");
+    }
 
-	@PutMapping("/reativar/{id}")
-	public ResponseEntity<?> reativar(@PathVariable long id) {
+    @PutMapping("/reativar/{id}")
+    public ResponseEntity<?> reativar(@PathVariable long id) {
 
-		Usuario _usuario = usuarioService.reativar(id);
-		if (_usuario != null) {
-			return ResponseEntity.ok().body("Conta de usuário ativada com sucesso!");
-		}
+        Usuario _usuario = usuarioService.reativar(id);
+        if (_usuario != null) {
+            return ResponseEntity.ok().body("Conta de usuário ativada com sucesso!");
+        }
 
-		throw new ResourceNotFoundException("Erro ao ativar a conta de usuário!");
-	}
+        throw new ResourceNotFoundException("Erro ao ativar a conta de usuário!");
+    }
 
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable long id) {
-		boolean deleted = usuarioService.delete(id);
-		if (deleted) {
-			return ResponseEntity.ok("Usuário deletado com sucesso!");
-		}
-		throw new ResourceNotFoundException("Erro ao deletar usuário!");
-	}
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable long id) {
+        boolean deleted = usuarioService.delete(id);
+        if (deleted) {
+            return ResponseEntity.ok("Usuário deletado com sucesso!");
+        }
+        throw new ResourceNotFoundException("Erro ao deletar usuário!");
+    }
 
+    // Novo endpoint para atualizar o usuário
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<?> atualizarUsuario(@PathVariable long id, @RequestBody Usuario usuario) {
+
+        Usuario _usuario = usuarioService.atualizarUsuario(id, usuario);
+        if (_usuario != null) {
+            return ResponseEntity.ok().body("Usuário atualizado com sucesso!");
+        }
+
+        throw new ResourceNotFoundException("Erro ao atualizar o usuário!");
+    }
 }

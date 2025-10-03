@@ -14,125 +14,157 @@ import jakarta.transaction.Transactional;
 @Service
 public class UsuarioService {
 
-	private UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
 
-	public UsuarioService(UsuarioRepository usuarioRepository) {
-		super();
-		this.usuarioRepository = usuarioRepository;
-	}
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        super();
+        this.usuarioRepository = usuarioRepository;
+    }
 
-	public Usuario findById(long id) {
-		Optional<Usuario> usuario = usuarioRepository.findById(id);
+    public Usuario findById(long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
 
-		if (usuario.isPresent()) {
-			return usuario.get();
-		}
-		return null;
+        if (usuario.isPresent()) {
+            return usuario.get();
+        }
+        return null;
+    }
 
-	}
+    public List<Usuario> findAll() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        return usuarios;
+    }
 
-	public List<Usuario> findAll() {
-		List<Usuario> usuarios = usuarioRepository.findAll();
-		return usuarios;
-	}
+    @Transactional
+    public Usuario save(Usuario usuario) {
+        Usuario _usuario = usuarioRepository.findByEmail(usuario.getEmail());
 
-	@Transactional
-	public Usuario save(Usuario usuario) {
+        if (_usuario == null) {
 
-		Usuario _usuario = usuarioRepository.findByEmail(usuario.getEmail());
+            String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
 
-		if (_usuario == null) {
+            usuario.setSenha(senha);
+            usuario.setDataCadastro(LocalDateTime.now());
+            usuario.setStatusUsuario("ATIVO");
 
-			String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
+            return usuarioRepository.save(usuario);
+        }
+        return null;
+    }
 
-			usuario.setSenha(senha);
-			usuario.setDataCadastro(LocalDateTime.now());
-			usuario.setStatusUsuario("ATIVO");
+    public boolean delete(long id) {
+        Usuario usuario = findById(id);
+        if (usuario != null) {
+            usuarioRepository.delete(usuario); // ou equivalente
+            return true;
+        }
+        return false;
+    }
 
-			return usuarioRepository.save(usuario);
+    @Transactional
+    public Usuario login(String email, String senha) {
+        Usuario _usuario = usuarioRepository.findByEmail(email);
 
-		}
-		return null;
-	}
+        if (_usuario != null) {
+            if (_usuario.getStatusUsuario().equals("ATIVO")) {
+                byte[] decodedPass = Base64.getDecoder().decode(_usuario.getSenha());
 
-	public boolean delete(long id) {
-		Usuario usuario = findById(id);
-		if (usuario != null) {
-			usuarioRepository.delete(usuario); // ou equivalente
-			return true;
-		}
-		return false;
-	}
+                if (new String(decodedPass).equals(senha)) {
+                    return _usuario;
+                }
+            }
+        }
+        return null;
+    }
 
-	@Transactional
-	public Usuario login(String email, String senha) {
-		Usuario _usuario = usuarioRepository.findByEmail(email);
+    @Transactional
+    public Usuario alterarSenha(long id, Usuario usuario) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
 
-		if (_usuario != null) {
-			if (_usuario.getStatusUsuario().equals("ATIVO")) {
-				byte[] decodedPass = Base64.getDecoder().decode(_usuario.getSenha());
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
+            String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
 
-				if (new String(decodedPass).equals(senha)) {
-					return _usuario;
-				}
-			}
-		}
-		return null;
-	}
+            usuarioAtualizado.setSenha(senha);
+            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setStatusUsuario("ATIVO");
 
-	@Transactional
-	public Usuario alterarSenha(long id, Usuario usuario) {
-		Optional<Usuario> _usuario = usuarioRepository.findById(id);
+            return usuarioRepository.save(usuarioAtualizado);
+        }
+        return null;
+    }
 
-		if (_usuario.isPresent()) {
-			Usuario usuarioAtualizado = _usuario.get();
-			String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
+    @Transactional
+    public Usuario inativar(long id) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
 
-			usuarioAtualizado.setSenha(senha);
-			usuarioAtualizado.setDataCadastro(LocalDateTime.now());
-			usuarioAtualizado.setStatusUsuario("ATIVO");
+        String senhaPadrao = "12345678";
 
-			return usuarioRepository.save(usuarioAtualizado);
-		}
-		return null;
-	}
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
+            String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
 
-	@Transactional
-	public Usuario inativar(long id) {
-		Optional<Usuario> _usuario = usuarioRepository.findById(id);
+            usuarioAtualizado.setSenha(senha);
+            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setStatusUsuario("INATIVO");
 
-		String senhaPadrao = "12345678";
+            return usuarioRepository.save(usuarioAtualizado);
+        }
+        return null;
+    }
 
-		if (_usuario.isPresent()) {
-			Usuario usuarioAtualizado = _usuario.get();
-			String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
+    @Transactional
+    public Usuario reativar(long id) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
 
-			usuarioAtualizado.setSenha(senha);
-			usuarioAtualizado.setDataCadastro(LocalDateTime.now());
-			usuarioAtualizado.setStatusUsuario("INATIVO");
+        String senhaPadrao = "12345678";
 
-			return usuarioRepository.save(usuarioAtualizado);
-		}
-		return null;
-	}
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
+            String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
 
-	@Transactional
-	public Usuario reativar(long id) {
-		Optional<Usuario> _usuario = usuarioRepository.findById(id);
+            usuarioAtualizado.setSenha(senha);
+            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setStatusUsuario("ATIVO");
 
-		String senhaPadrao = "12345678";
+            return usuarioRepository.save(usuarioAtualizado);
+        }
+        return null;
+    }
 
-		if (_usuario.isPresent()) {
-			Usuario usuarioAtualizado = _usuario.get();
-			String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
+    // Novo método para atualizar o usuário
+    @Transactional
+    public Usuario atualizarUsuario(long id, Usuario usuario) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
 
-			usuarioAtualizado.setSenha(senha);
-			usuarioAtualizado.setDataCadastro(LocalDateTime.now());
-			usuarioAtualizado.setStatusUsuario("ATIVO");
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
 
-			return usuarioRepository.save(usuarioAtualizado);
-		}
-		return null;
-	}
+            // Atualizando os campos conforme os dados fornecidos
+            if (usuario.getNome() != null) {
+                usuarioAtualizado.setNome(usuario.getNome());
+            }
+            if (usuario.getEmail() != null) {
+                usuarioAtualizado.setEmail(usuario.getEmail());
+            }
+            if (usuario.getSenha() != null) {
+                String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
+                usuarioAtualizado.setSenha(senha);
+            }
+            if (usuario.getFoto() != null) {
+                usuarioAtualizado.setFoto(usuario.getFoto());
+            }
+            if (usuario.getNivelAcesso() != null) {
+                usuarioAtualizado.setNivelAcesso(usuario.getNivelAcesso());
+            }
+            if (usuario.getStatusUsuario() != null) {
+                usuarioAtualizado.setStatusUsuario(usuario.getStatusUsuario());
+            }
 
+            usuarioAtualizado.setDataCadastro(LocalDateTime.now()); // Atualizando a data de cadastro
+
+            return usuarioRepository.save(usuarioAtualizado);
+        }
+        return null;
+    }
 }
