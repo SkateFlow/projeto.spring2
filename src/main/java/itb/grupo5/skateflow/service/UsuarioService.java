@@ -31,8 +31,7 @@ public class UsuarioService {
     }
 
     public List<Usuario> findAll() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios;
+        return usuarioRepository.findAll();
     }
 
     @Transactional
@@ -40,7 +39,6 @@ public class UsuarioService {
         Usuario _usuario = usuarioRepository.findByEmail(usuario.getEmail());
 
         if (_usuario == null) {
-
             String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
 
             usuario.setSenha(senha);
@@ -55,7 +53,7 @@ public class UsuarioService {
     public boolean delete(long id) {
         Usuario usuario = findById(id);
         if (usuario != null) {
-            usuarioRepository.delete(usuario); // ou equivalente
+            usuarioRepository.delete(usuario);
             return true;
         }
         return false;
@@ -132,7 +130,7 @@ public class UsuarioService {
         return null;
     }
 
-    // Novo método para atualizar o usuário
+    // Método para atualizar usuário (sem alterar senha)
     @Transactional
     public Usuario atualizarUsuario(long id, Usuario usuario) {
         Optional<Usuario> _usuario = usuarioRepository.findById(id);
@@ -140,16 +138,11 @@ public class UsuarioService {
         if (_usuario.isPresent()) {
             Usuario usuarioAtualizado = _usuario.get();
 
-            // Atualizando os campos conforme os dados fornecidos
             if (usuario.getNome() != null) {
                 usuarioAtualizado.setNome(usuario.getNome());
             }
             if (usuario.getEmail() != null) {
                 usuarioAtualizado.setEmail(usuario.getEmail());
-            }
-            if (usuario.getSenha() != null) {
-                String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
-                usuarioAtualizado.setSenha(senha);
             }
             if (usuario.getFoto() != null) {
                 usuarioAtualizado.setFoto(usuario.getFoto());
@@ -161,7 +154,7 @@ public class UsuarioService {
                 usuarioAtualizado.setStatusUsuario(usuario.getStatusUsuario());
             }
 
-            usuarioAtualizado.setDataCadastro(LocalDateTime.now()); // Atualizando a data de cadastro
+            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
 
             return usuarioRepository.save(usuarioAtualizado);
         }
