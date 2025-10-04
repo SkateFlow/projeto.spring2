@@ -81,10 +81,11 @@ public class UsuarioService {
 
         if (_usuario.isPresent()) {
             Usuario usuarioAtualizado = _usuario.get();
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
             String senha = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
 
             usuarioAtualizado.setSenha(senha);
-            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             usuarioAtualizado.setStatusUsuario("ATIVO");
 
             return usuarioRepository.save(usuarioAtualizado);
@@ -100,10 +101,11 @@ public class UsuarioService {
 
         if (_usuario.isPresent()) {
             Usuario usuarioAtualizado = _usuario.get();
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
             String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
 
             usuarioAtualizado.setSenha(senha);
-            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             usuarioAtualizado.setStatusUsuario("INATIVO");
 
             return usuarioRepository.save(usuarioAtualizado);
@@ -119,10 +121,11 @@ public class UsuarioService {
 
         if (_usuario.isPresent()) {
             Usuario usuarioAtualizado = _usuario.get();
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
             String senha = Base64.getEncoder().encodeToString(senhaPadrao.getBytes());
 
             usuarioAtualizado.setSenha(senha);
-            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             usuarioAtualizado.setStatusUsuario("ATIVO");
 
             return usuarioRepository.save(usuarioAtualizado);
@@ -145,9 +148,7 @@ public class UsuarioService {
             if (usuario.getEmail() != null) {
                 usuarioAtualizado.setEmail(usuario.getEmail());
             }
-            if (usuario.getFoto() != null) {
-                usuarioAtualizado.setFoto(usuario.getFoto());
-            }
+            usuarioAtualizado.setFoto(usuario.getFoto());
             if (usuario.getNivelAcesso() != null) {
                 usuarioAtualizado.setNivelAcesso(usuario.getNivelAcesso());
             }
@@ -175,7 +176,13 @@ public class UsuarioService {
             if (usuario.getNome() != null && !usuario.getNome().trim().isEmpty()) {
                 usuarioAtualizado.setNome(usuario.getNome());
             }
-            usuarioAtualizado.setFoto(usuario.getFoto());
+            
+            // Atualiza a foto (pode ser null para remover)
+            if (usuario.getFoto() != null) {
+                usuarioAtualizado.setFoto(usuario.getFoto());
+            } else if (usuario.getFoto() == null && usuarioAtualizado.getFoto() != null) {
+                usuarioAtualizado.setFoto(null);
+            }
             
             usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             return usuarioRepository.save(usuarioAtualizado);
