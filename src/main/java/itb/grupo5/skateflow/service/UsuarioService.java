@@ -154,8 +154,6 @@ public class UsuarioService {
                 usuarioAtualizado.setStatusUsuario(usuario.getStatusUsuario());
             }
 
-            usuarioAtualizado.setDataCadastro(LocalDateTime.now());
-
             return usuarioRepository.save(usuarioAtualizado);
         }
         return null;
