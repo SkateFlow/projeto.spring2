@@ -129,4 +129,18 @@ public class UsuarioController {
 
         throw new ResourceNotFoundException("Erro ao atualizar o usuário!");
     }
+    
+    // Endpoint para atualizar perfil do usuário
+    @PutMapping("/perfil/{id}")
+    public ResponseEntity<?> atualizarPerfil(@PathVariable long id, @RequestBody Usuario usuario) {
+        try {
+            Usuario _usuario = usuarioService.atualizarPerfil(id, usuario);
+            if (_usuario != null) {
+                return ResponseEntity.ok(_usuario);
+            }
+            throw new ResourceNotFoundException("Usuário não encontrado!");
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Erro ao atualizar o perfil: " + e.getMessage());
+        }
+    }
 }

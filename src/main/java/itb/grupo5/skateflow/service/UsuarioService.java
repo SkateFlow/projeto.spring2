@@ -137,6 +137,7 @@ public class UsuarioService {
 
         if (_usuario.isPresent()) {
             Usuario usuarioAtualizado = _usuario.get();
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
 
             if (usuario.getNome() != null) {
                 usuarioAtualizado.setNome(usuario.getNome());
@@ -153,7 +154,30 @@ public class UsuarioService {
             if (usuario.getStatusUsuario() != null) {
                 usuarioAtualizado.setStatusUsuario(usuario.getStatusUsuario());
             }
+            
+            // Preserva a data de cadastro original
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
 
+            return usuarioRepository.save(usuarioAtualizado);
+        }
+        return null;
+    }
+    
+    // Método para atualizar perfil do usuário (apenas nome e foto)
+    @Transactional
+    public Usuario atualizarPerfil(long id, Usuario usuario) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
+
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
+
+            if (usuario.getNome() != null && !usuario.getNome().trim().isEmpty()) {
+                usuarioAtualizado.setNome(usuario.getNome());
+            }
+            usuarioAtualizado.setFoto(usuario.getFoto());
+            
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             return usuarioRepository.save(usuarioAtualizado);
         }
         return null;
