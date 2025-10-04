@@ -1,6 +1,7 @@
 package itb.grupo5.skateflow.rest.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -143,4 +144,19 @@ public class UsuarioController {
             throw new ResourceNotFoundException("Erro ao atualizar o perfil: " + e.getMessage());
         }
     }
+    
+    @PutMapping("/alterarSenhaComVerificacao/{id}")
+    public ResponseEntity<?> alterarSenhaComVerificacao(@PathVariable long id, @RequestBody Map<String, String> senhas) {
+        String senhaAtual = senhas.get("senhaAtual");
+        String novaSenha = senhas.get("novaSenha");
+        
+        boolean alterada = usuarioService.alterarSenhaComVerificacao(id, senhaAtual, novaSenha);
+        if (alterada) {
+            return ResponseEntity.ok().build();
+        }
+        
+        return ResponseEntity.badRequest().build();
+    }
+    
+
 }

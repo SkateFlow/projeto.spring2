@@ -177,16 +177,39 @@ public class UsuarioService {
                 usuarioAtualizado.setNome(usuario.getNome());
             }
             
-            // Atualiza a foto (pode ser null para remover)
-            if (usuario.getFoto() != null) {
-                usuarioAtualizado.setFoto(usuario.getFoto());
-            } else if (usuario.getFoto() == null && usuarioAtualizado.getFoto() != null) {
-                usuarioAtualizado.setFoto(null);
-            }
+            // Atualiza a foto sempre (pode ser null para remover)
+            usuarioAtualizado.setFoto(usuario.getFoto());
             
             usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
             return usuarioRepository.save(usuarioAtualizado);
         }
         return null;
     }
+    
+    @Transactional
+    public boolean alterarSenhaComVerificacao(long id, String senhaAtual, String novaSenha) {
+        Optional<Usuario> _usuario = usuarioRepository.findById(id);
+
+        if (_usuario.isPresent()) {
+            Usuario usuarioAtualizado = _usuario.get();
+            
+            // Verifica se a senha atual está correta
+            byte[] decodedPass = Base64.getDecoder().decode(usuarioAtualizado.getSenha());
+            if (!new String(decodedPass).equals(senhaAtual)) {
+                return false;
+            }
+            
+            LocalDateTime dataCadastroOriginal = usuarioAtualizado.getDataCadastro();
+            String senha = Base64.getEncoder().encodeToString(novaSenha.getBytes());
+
+            usuarioAtualizado.setSenha(senha);
+            usuarioAtualizado.setDataCadastro(dataCadastroOriginal);
+
+            usuarioRepository.save(usuarioAtualizado);
+            return true;
+        }
+        return false;
+    }
+    
+
 }

@@ -19,7 +19,7 @@ public class Usuario {
 	private String email;
 	private String senha;
 	private String nivelAcesso; // ADMIN ou USER
-	private byte[] foto;
+	private String foto;
 	private LocalDateTime dataCadastro;
 	private String statusUsuario;
 	
@@ -53,10 +53,10 @@ public class Usuario {
 	public void setNivelAcesso(String nivelAcesso) {
 		this.nivelAcesso = nivelAcesso;
 	}
-	public byte[] getFoto() {
+	public String getFoto() {
 		return foto;
 	}
-	public void setFoto(byte[] foto) {
+	public void setFoto(String foto) {
 		this.foto = foto;
 	}
 	public LocalDateTime getDataCadastro() {
